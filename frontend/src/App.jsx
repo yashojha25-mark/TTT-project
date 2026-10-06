@@ -3,7 +3,9 @@ import './App.css'
 import ChatWindow from './components/ChatWindow'
 import ChatInput from './components/ChatInput'
 
-const API_BASE = import.meta.env.BACKEND_BASE_URL
+const API_BASE = import.meta.env.VITE_BACKEND_BASE_URL?.replace(/\/$/, '')
+const REQUEST_TIMEOUT_MS = 30000
+
 function App() {
 
   const [message, setMessage] = useState('')
@@ -36,10 +38,19 @@ function App() {
     setLoading(true)
     setError('')
 
+    let timeoutId
+
     try {
+      if (!API_BASE) {
+        throw new Error('Frontend is missing VITE_BACKEND_BASE_URL.')
+      }
+
+      const controller = new AbortController()
+      timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+
       const response = await fetch(`${API_BASE}/api/chat`, {
         method: 'POST',
-      
+        signal: controller.signal,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text }),
       })
@@ -68,14 +79,20 @@ function App() {
 
       const isNetworkFailure =
         err instanceof TypeError || /failed to fetch|networkerror/i.test(err.message)
+      const isTimeout = err.name === 'AbortError'
 
       setError(
-        isNetworkFailure
+        isTimeout
+          ? 'The request took too long. Please try again.'
+          : isNetworkFailure
           ? 'Could not reach the server. Is the backend running on port 5000?'
           : err.message
       )
     } finally {
-     
+      if (timeoutId) {
+        window.clearTimeout(timeoutId)
+      }
+
       setLoading(false)
     }
   }
