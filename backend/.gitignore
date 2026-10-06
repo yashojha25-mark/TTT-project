@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+
+# Environment variables — NEVER commit these (API keys!)
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*

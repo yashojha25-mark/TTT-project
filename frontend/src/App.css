@@ -1,0 +1,828 @@
+
+:root {
+  
+  --bg-app: rgba(13, 18, 33, 0.82);
+  --bg-chat: rgba(10, 14, 26, 0.55);
+  --surface: rgba(26, 33, 56, 0.72);
+  --surface-2: rgba(33, 42, 70, 0.85);
+  --border: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  --text: #e8ecf7;
+  --text-muted: #8b98b8;
+  --text-faint: #64708f;
+
+  /* The brand: violet → indigo → cyan. */
+  --brand: #7c5cff;
+  --brand-2: #22d3ee;
+  --brand-dark: #5b3df0;
+  --brand-soft: rgba(124, 92, 255, 0.14);
+
+  --gradient-brand: linear-gradient(135deg, #7c5cff 0%, #5b3df0 55%, #22d3ee 130%);
+  --user-bubble: linear-gradient(135deg, #7c5cff, #5b3df0 60%, #4338ca);
+  --ai-bubble: rgba(29, 37, 62, 0.78);
+
+  --success: #34d399;
+  --danger: #f87171;
+
+  --radius: 16px;
+  --radius-sm: 12px;
+  /* Shadows on a dark UI do less work than borders do — they are kept
+     soft and additive rather than black-on-black. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 0 1px rgba(124, 92, 255, 0.25), 0 12px 40px rgba(91, 61, 240, 0.35);
+  --shadow-app: 0 40px 100px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* The app shell: a centred glass card floating over the aurora. */
+.app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  max-width: 960px;
+  margin: 0 auto;
+  background: var(--bg-app);
+
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  box-shadow: var(--shadow-app);
+}
+
+/* ---------- Header ---------- */
+.app-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 26px;
+  color: #ffffff;
+  flex-shrink: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(124, 92, 255, 0.2),
+    rgba(124, 92, 255, 0.04) 60%,
+    transparent
+  );
+  /* Above the chat area, so the header's hairlines are not painted
+     over when the conversation scrolls underneath it. */
+  z-index: 1;
+}
+
+/* The gradient hairline under the header — cheaper and crisper than
+   a full 1px border on a translucent surface. */
+.app-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.18) 20%,
+    rgba(124, 92, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0.18) 80%,
+    transparent
+  );
+}
+
+.header-identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* The app mark. A gradient tile with a pulsing halo ring behind it. */
+.brand-badge {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  font-size: 22px;
+  background: var(--gradient-brand);
+  border-radius: 14px;
+  flex-shrink: 0;
+  box-shadow: 0 6px 18px rgba(91, 61, 240, 0.5);
+}
+
+/* The halo. An absolutely-positioned ring that expands and fades —
+   the same technique as the status dot, just larger. */
+.brand-badge::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(124, 92, 255, 0.7);
+  animation: halo 3s ease-out infinite;
+}
+
+@keyframes halo {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+.app-header h1 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+
+  background: linear-gradient(100deg, #ffffff 10%, #c7bcff 55%, #7ee7f5 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.app-header .subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+/* A tiny "beta" tag beside the wordmark. */
+.brand-tag {
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #d9d2ff;
+  background: rgba(124, 92, 255, 0.22);
+  border: 1px solid rgba(124, 92, 255, 0.4);
+  border-radius: 999px;
+  -webkit-text-fill-color: #d9d2ff;
+}
+
+/* ---------- Header actions ---------- */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* The "online" pill on the right of the header. */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 13px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #c9d5f0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--success);
+  border-radius: 50%;
+  /* The pulsing dot: a soft glow that reads as "alive". */
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.9);
+  animation: pulse 2.2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(52, 211, 153, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0);
+  }
+}
+
+/* The "clear chat" action. Icon-only, so it needs an aria-label
+   (provided in App.jsx) rather than visible text. */
+.ghost-button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  font-size: 15px;
+  font-family: inherit;
+  color: #c9d5f0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.12s;
+}
+
+.ghost-button:hover:not(:disabled) {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
+}
+
+.ghost-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ghost-button:focus-visible {
+  outline: 2px solid rgba(124, 92, 255, 0.7);
+  outline-offset: 2px;
+}
+
+/* ---------- Chat area (the scrollable middle) ---------- */
+.chat-window {
+  flex: 1;
+  overflow-y: auto;
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: var(--bg-chat);
+  /* Momentum scrolling on iOS, and a thin themed scrollbar below. */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+}
+
+.chat-window::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-window::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+}
+
+.chat-window::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* ---------- Empty state ---------- */
+.empty-state {
+  margin: auto;
+  max-width: 520px;
+  padding: 24px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.65;
+  animation: fade-in-up 0.4s ease-out both;
+}
+
+/* The big gradient orb at the top of the empty state. */
+.empty-orb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 20px;
+  font-size: 34px;
+  background: var(--gradient-brand);
+  border-radius: 26px;
+  box-shadow: 0 18px 45px rgba(91, 61, 240, 0.55);
+}
+
+/* A second, offset glow behind the orb — layered depth rather than
+   one flat shadow. */
+.empty-orb::before {
+  content: '';
+  position: absolute;
+  inset: -14px;
+  border-radius: 34px;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(124, 92, 255, 0.35),
+    transparent 70%
+  );
+  z-index: -1;
+  animation: breathe 4.5s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+.empty-state h2 {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  background: linear-gradient(100deg, #ffffff 20%, #bfb2ff 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.empty-state p {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.suggestions-label {
+  margin-top: 26px;
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.suggestions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+}
+
+/* The prompt chips are real <button>s, so they are keyboard reachable
+   and announce themselves to assistive tech. */
+.suggestion-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 15px;
+  font-size: 13px;
+  font-family: inherit;
+  text-align: left;
+  line-height: 1.4;
+  color: #cbd5ee;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background 0.16s, border-color 0.16s, transform 0.12s,
+    color 0.16s;
+}
+
+.suggestion-chip:hover {
+  color: #ffffff;
+  background: rgba(124, 92, 255, 0.16);
+  border-color: rgba(124, 92, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.suggestion-chip:focus-visible {
+  outline: 2px solid rgba(124, 92, 255, 0.7);
+  outline-offset: 2px;
+}
+
+/* The leading glyph on each chip. */
+.suggestion-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+  background: var(--brand-soft);
+  border-radius: 9px;
+  flex-shrink: 0;
+}
+
+/* ---------- Message rows ---------- */
+.message-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  /* Without this, a flex row refuses to shrink below its content
+     width and a long message pushes the whole layout sideways. */
+  min-width: 0;
+}
+
+.message-row.user {
+  justify-content: flex-end;
+  /* Mirror the row order so the user's avatar sits on the right. */
+  flex-direction: row-reverse;
+}
+
+.message-row.assistant {
+  justify-content: flex-start;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  font-size: 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+/* The counterpart of the AI's colourful avatar, so the two sides are
+   distinguishable at a glance even in a black-and-white screenshot. */
+.message-row.assistant .avatar {
+  background: var(--gradient-brand);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 14px rgba(91, 61, 240, 0.45);
+}
+
+.bubble-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  /* min-width:0 is what actually lets a long word wrap inside a
+     flex child instead of stretching the parent. */
+  min-width: 0;
+  max-width: 74%;
+}
+
+/* The user's group is right-aligned, so its labels align right too. */
+.message-row.user .bubble-group {
+  align-items: flex-end;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px;
+}
+
+.sender {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.message-row.user .sender {
+  color: #c9d5f0;
+}
+
+.timestamp {
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+.bubble {
+  width: fit-content;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  line-height: 1.65;
+  /* Long unbroken text (a pasted URL, a wall of code) would
+     otherwise overflow the bubble and break the layout. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Each side gets its own shape, colour and shadow. The asymmetric
+   corner radius on the "tail" corner is what makes a plain rounded
+   box read as a speech bubble. */
+.message-row.assistant .bubble {
+  color: var(--text);
+  background: var(--ai-bubble);
+  border: 1px solid var(--border-strong);
+  border-bottom-left-radius: 5px;
+  box-shadow: var(--shadow-md);
+  /* Frosted, so the aurora tints the AI bubble very slightly. */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.message-row.user .bubble {
+  color: #ffffff;
+  background: var(--user-bubble);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-bottom-right-radius: 5px;
+  box-shadow: 0 6px 22px rgba(91, 61, 240, 0.45);
+}
+
+/* Animate a new message in. `both` fill-mode keeps the start state
+   during the delay, so nothing flashes at full opacity first. */
+.message-row {
+  animation: fade-in-up 0.22s ease-out both;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- "AI is thinking" indicator ---------- */
+.bubble.thinking {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 22px;
+  background: var(--ai-bubble);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.thinking-label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.dots {
+  display: inline-flex;
+  gap: 5px;
+}
+
+.dots span {
+  width: 7px;
+  height: 7px;
+  background: var(--brand);
+  border-radius: 50%;
+  animation: bounce 1.3s infinite ease-in-out;
+}
+
+/* The small stagger is what turns three dots into a wave. */
+.dots span:nth-child(2) {
+  animation-delay: 0.18s;
+}
+
+.dots span:nth-child(3) {
+  animation-delay: 0.36s;
+}
+
+@keyframes bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+/* Respect the OS "reduce motion" setting — some users get motion
+   sickness from animation. This is a one-line win for comfort. */
+@media (prefers-reduced-motion: reduce) {
+  .message-row,
+  .dots span,
+  .status-dot,
+  .empty-orb::before,
+  .brand-badge::after {
+    animation: none;
+  }
+}
+
+/* ---------- Error banner ---------- */
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 12px 26px;
+  font-size: 13px;
+  color: #ffd9d9;
+  background: rgba(248, 113, 113, 0.12);
+  border-top: 1px solid rgba(248, 113, 113, 0.35);
+  /* The left accent bar is what makes it read as an alert rather than
+     a stray line of red text. */
+  box-shadow: inset 3px 0 0 var(--danger);
+  animation: fade-in-up 0.24s ease-out both;
+}
+
+/* ---------- Input area (pinned to the bottom) ---------- */
+.chat-footer {
+  padding: 18px 26px;
+  background: linear-gradient(
+    0deg,
+    rgba(124, 92, 255, 0.1),
+    transparent
+  );
+  flex-shrink: 0;
+}
+
+/* display:flex puts the input and the button on one line, and the
+   input is allowed to grow with flex:1. */
+.chat-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  /* A soft glow behind the whole bar, so the composer is the visually
+     brightest thing on the screen — it is where the eye should go. */
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* :focus-within on the WRAPPER, not the input — so the whole pill
+   lights up when the text field has focus. */
+.chat-form:focus-within {
+  border-color: rgba(124, 92, 255, 0.55);
+  box-shadow: var(--shadow-glow);
+}
+
+.chat-input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  /* `outline: none` is safe here because the parent .chat-form:focus-within
+     rule above provides the visible focus indication instead. */
+  outline: none;
+}
+
+.chat-input::placeholder {
+  color: var(--text-faint);
+}
+
+/* While the AI is thinking the input is locked, and the dimmed text is
+   the visual cue that says so. */
+.chat-input:disabled {
+  color: var(--text-faint);
+  cursor: not-allowed;
+}
+
+.send-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #ffffff;
+  background: var(--gradient-brand);
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 6px 20px rgba(91, 61, 240, 0.45);
+  transition: transform 0.12s, box-shadow 0.18s, filter 0.18s;
+}
+
+.send-button:hover:not(:disabled) {
+  filter: brightness(1.1);
+  box-shadow: 0 10px 28px rgba(91, 61, 240, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Pressed state — the button visibly dips under the cursor. */
+.send-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px rgba(91, 61, 240, 0.5);
+}
+
+/* A disabled button must LOOK disabled. Without this the user keeps
+   clicking and assumes the app is broken, when really it is working.
+   `filter: none` neutralises the hover brightness flash. */
+.send-button:disabled {
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--text-faint);
+  box-shadow: none;
+  cursor: not-allowed;
+  filter: none;
+}
+
+/* Keyboard-only focus ring. :focus-visible fires for Tab but not for
+   a mouse click, so pointer users are spared a ring they do not
+   need while keyboard users keep the one they do. */
+.send-button:focus-visible {
+  outline: 3px solid rgba(124, 92, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* A one-line hint under the composer. */
+.input-hint {
+  margin-top: 10px;
+  font-size: 11.5px;
+  text-align: center;
+  color: var(--text-faint);
+}
+
+.input-hint kbd {
+  padding: 1px 6px;
+  font-family: inherit;
+  font-size: 10.5px;
+  color: #c9d5f0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-strong);
+  border-radius: 5px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 700px) {
+  .app {
+    max-width: 100%;
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
+  }
+
+  .chat-window {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .app-header {
+    padding: 14px 16px;
+  }
+
+  .app-header h1 {
+    font-size: 17px;
+  }
+
+  .app-header .subtitle {
+    font-size: 12px;
+  }
+
+  /* On a narrow screen the 74% cap wastes width, and the avatar
+     costs 46px of it. Both are dropped so the text gets the room. */
+  .bubble-group {
+    max-width: 88%;
+  }
+
+  .avatar {
+    display: none;
+  }
+
+  .chat-footer {
+    padding: 14px 16px;
+  }
+
+  .chat-form {
+    padding: 4px;
+  }
+
+  .send-button {
+    padding: 12px 16px;
+  }
+
+  .send-button .send-label {
+    display: none;
+  }
+
+  .status-pill {
+    display: none;
+  }
+
+  .suggestions {
+    grid-template-columns: 1fr;
+  }
+
+  .input-hint {
+    display: none;
+  }
+}

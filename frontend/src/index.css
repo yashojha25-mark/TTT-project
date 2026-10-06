@@ -1,0 +1,55 @@
+
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial,
+    sans-serif;
+  color: #e6ebf5;
+  /* Fallback for browsers without color-mix(). */
+  background: #0a0e1a;
+  /* Fixed, so the glow does not scroll away with the chat. */
+  background-attachment: fixed;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      900px 600px at 12% -10%,
+      color-mix(in srgb, var(--brand) 34%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      800px 600px at 98% 8%,
+      color-mix(in srgb, var(--brand-2) 26%, transparent),
+      transparent 72%
+    ),
+    radial-gradient(
+      700px 500px at 50% 118%,
+      color-mix(in srgb, var(--brand-2) 20%, transparent),
+      transparent 75%
+    );
+}
+
+::selection {
+  background: color-mix(in srgb, var(--brand) 45%, transparent);
+  color: #ffffff;
+}
