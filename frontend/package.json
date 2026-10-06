@@ -7,8 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
-    "preview": "vite preview",
-    "build-frontend": "npm run build --prefix frontend"
+    "preview": "vite preview"
   },
   "dependencies": {
     "react": "^19.2.8",
