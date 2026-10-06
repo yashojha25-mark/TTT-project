@@ -3,7 +3,7 @@ import './App.css'
 import ChatWindow from './components/ChatWindow'
 import ChatInput from './components/ChatInput'
 
-const API_BASE = import.meta.env.VITE_BACKEND_BASE_URL
+const API_BASE = import.meta.env.BACKEND_BASE_URL
 function App() {
 
   const [message, setMessage] = useState('')
