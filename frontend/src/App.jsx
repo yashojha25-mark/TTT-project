@@ -3,8 +3,7 @@ import './App.css'
 import ChatWindow from './components/ChatWindow'
 import ChatInput from './components/ChatInput'
 
-const API_BASE = 'http://localhost:5000'
-
+const API_BASE = import.meta.env.VITE_BACKEND_BASE_URL
 function App() {
 
   const [message, setMessage] = useState('')
